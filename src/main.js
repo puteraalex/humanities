@@ -7,6 +7,7 @@ import {
   subscribe,
   endDay,
   pickOption,
+  answerQuestion,
   restart,
   retrySame,
   showDebrief,
@@ -45,6 +46,7 @@ document.addEventListener('click', (e) => {
   const buyBtn = e.target.closest('[data-buy]');
   const sellBtn = e.target.closest('[data-sell]');
   const option = e.target.closest('[data-option]');
+  const answer = e.target.closest('[data-answer]');
   const action = e.target.closest('[data-action]');
   const name = action ? action.dataset.action : null;
   let focusSelector = null;
@@ -55,6 +57,9 @@ document.addEventListener('click', (e) => {
   } else if (sellBtn) {
     sell(sellBtn.dataset.sell);
     focusSelector = `[data-sell="${sellBtn.dataset.sell}"]`;
+  } else if (answer) {
+    const [questionId, optionId] = answer.dataset.answer.split('|');
+    answerQuestion(questionId, optionId);
   } else if (option) {
     pickOption(option.dataset.option);
   } else if (name === 'launch') {
@@ -77,6 +82,6 @@ document.addEventListener('click', (e) => {
     document.querySelector('#decision button') ||
     document.querySelector('#debrief:not([hidden]) button');
   const target = (focusSelector && document.querySelector(focusSelector)) || fallback;
-  if (target && !target.disabled) target.focus();
+  if (target && !target.disabled) target.focus({ preventScroll: true });
   if (name === 'debrief' || name === 'retry-same' || name === 'restart') window.scrollTo(0, 0);
 });

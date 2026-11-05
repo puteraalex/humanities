@@ -1,5 +1,7 @@
-import { buildDebrief } from '../campaign/index.js';
+import { buildDebrief, sessionTotals, VERDICT_TEXT } from '../campaign/index.js';
+import { getSessionLog } from '../state/store.js';
 import { cardHtml } from './science.js';
+import { questionHtml } from './quiz.js';
 
 const reviewItem = (x) => `<li>${x.text}${x.cardId ? cardHtml(x.cardId) : ''}</li>`;
 
@@ -36,6 +38,38 @@ function whatIfHtml(list) {
       </div>`
     )
     .join('');
+}
+
+const answerRow = (label, x) =>
+  x && x.answered
+    ? `<p><strong>${label}:</strong> ${x.prompt}<br>
+        You said: ${x.answerText}
+        <span class="${x.correct ? 'right' : 'wrong'}">${x.correct ? 'Correct' : 'Not quite'}</span>
+        ${x.correct ? '' : `<br>Better answer: ${x.correctText}`}
+        <br><small>${x.explanation}</small></p>`
+    : '';
+
+function learningHtml(list) {
+  if (!list.length) return '';
+  const t = sessionTotals(getSessionLog());
+  const blocks = list
+    .map((l) => {
+      if (l.post && !l.post.answered) {
+        return `<h3>${l.title}</h3>${questionHtml(l.post)}
+          ${l.pre ? '<p class="note">Your earlier prediction will show up after you answer.</p>' : ''}`;
+      }
+      return `<h3>${l.title}</h3>
+        ${answerRow('Before', l.pre)}
+        ${answerRow('After', l.post)}
+        ${l.verdict ? `<p class="verdict">${VERDICT_TEXT[l.verdict]}</p>` : ''}`;
+    })
+    .join('');
+  return `
+    <section class="panel">
+      <h2>Check what you learned</h2>
+      ${blocks}
+      <p class="note">This session: predictions before storms ${t.before.right} of ${t.before.total} right. Questions after: ${t.after.right} of ${t.after.total} right. This is just a fun check. It does not prove how well the game teaches.</p>
+    </section>`;
 }
 
 export function renderDebrief(game) {
@@ -79,6 +113,8 @@ export function renderDebrief(game) {
         <ul>${d.improve.map(reviewItem).join('')}</ul>
       </div>
     </section>
+
+    ${learningHtml(d.learning)}
 
     <section class="panel">
       <h2>Supplies</h2>

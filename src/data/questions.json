@@ -1,0 +1,58 @@
+[
+  {
+    "id": "q-dust-pre",
+    "eventId": "dust-storm",
+    "when": "before",
+    "concept": "dust-power",
+    "prompt": "Dust will fill the air. What do you think happens to the power your solar panels make?",
+    "options": [
+      { "id": "a", "text": "It goes down" },
+      { "id": "b", "text": "It stays the same" },
+      { "id": "c", "text": "It goes up" }
+    ],
+    "correct": "a",
+    "explanation": "Solar panels need sunlight. Dust blocks some of it, so the panels make less power. (In this game the storm blocks 60% of sunlight. That number is a game rule.)"
+  },
+  {
+    "id": "q-dust-post",
+    "eventId": "dust-storm",
+    "when": "after",
+    "concept": "dust-power",
+    "prompt": "Which of these helps an outpost keep running when dust blocks the sunlight?",
+    "options": [
+      { "id": "a", "text": "Fewer solar panels" },
+      { "id": "b", "text": "Turning on more machines" },
+      { "id": "c", "text": "A battery that stored spare power" }
+    ],
+    "correct": "c",
+    "explanation": "A battery saves power from sunny days so systems can keep working when the panels make less. (In this game, extra solar panels also help.)"
+  },
+  {
+    "id": "q-solar-pre",
+    "eventId": "solar-storm",
+    "when": "before",
+    "concept": "radiation-shielding",
+    "prompt": "Fast charged particles from a solar storm are coming. Who gets less radiation?",
+    "options": [
+      { "id": "a", "text": "Crew working outside" },
+      { "id": "b", "text": "Crew inside thick walls or a shelter" },
+      { "id": "c", "text": "Everyone gets the same" }
+    ],
+    "correct": "b",
+    "explanation": "More material between you and the particles blocks more of them. NASA's release says cliffs or lava tubes on Mars could give extra shielding. (In this game, sheltering lowers radiation but stops research.)"
+  },
+  {
+    "id": "q-solar-post",
+    "eventId": "solar-storm",
+    "when": "after",
+    "concept": "radiation-shielding",
+    "prompt": "Which solar storm choice lets the least radiation reach the crew?",
+    "options": [
+      { "id": "a", "text": "Everyone shelters" },
+      { "id": "b", "text": "Shelter part of the day" },
+      { "id": "c", "text": "Keep working" }
+    ],
+    "correct": "a",
+    "explanation": "More time in shelter means less radiation reaches the crew. In this game the cost is no research while sheltering."
+  }
+]

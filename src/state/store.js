@@ -1,5 +1,6 @@
 import EVENTS from '../data/events.json';
 import ITEMS from '../data/items.json';
+import QUESTIONS from '../data/questions.json';
 import { createCampaign, addItem, removeItem, buildEngineState } from '../campaign/index.js';
 import {
   createScenario,
@@ -11,6 +12,8 @@ import {
 
 const listeners = new Set();
 let game = null;
+let attemptCounter = 0;
+let sessionLog = []; // quiz answers for this browser session only
 
 function emit() {
   listeners.forEach((fn) => fn(game));
@@ -23,8 +26,10 @@ function makeGame(seed, loadout = []) {
     const r = addItem(campaign, id, ITEMS);
     if (r.ok) campaign = r.campaign;
   }
+  attemptCounter += 1;
   return {
     seed,
+    attempt: attemptCounter,
     phase: 'prep', // 'prep' -> 'colony' -> 'debrief'
     campaign,
     state: buildEngineState(campaign, ITEMS),
@@ -33,11 +38,16 @@ function makeGame(seed, loadout = []) {
     items: ITEMS,
     lastDay: null,
     history: [],
+    answers: {},
   };
 }
 
 export function getGame() {
   return game;
+}
+
+export function getSessionLog() {
+  return sessionLog;
 }
 
 export function subscribe(fn) {
@@ -95,6 +105,41 @@ export function launch() {
 export function getPending() {
   if (game.phase !== 'colony') return null;
   return pendingDecision(game.state, game.scenario, EVENTS);
+}
+
+// The "before" prediction question for today's decision, if it has not been answered yet.
+export function getPendingQuestion() {
+  const pending = getPending();
+  if (!pending) return null;
+  const q = QUESTIONS.find((x) => x.eventId === pending.id && x.when === 'before');
+  if (!q || q.id in game.answers) return null;
+  return q;
+}
+
+// "before" questions only during the mission (for today's event); "after" only in the debrief.
+export function answerQuestion(questionId, optionId) {
+  const q = QUESTIONS.find((x) => x.id === questionId);
+  if (!q || questionId in game.answers) return false;
+  if (!q.options.some((o) => o.id === optionId)) return false;
+  if (q.when === 'before') {
+    const pending = getPending();
+    if (!pending || pending.id !== q.eventId) return false;
+  } else if (game.phase !== 'debrief') {
+    return false;
+  }
+  game = { ...game, answers: { ...game.answers, [questionId]: optionId } };
+  sessionLog = [
+    ...sessionLog,
+    {
+      attempt: game.attempt,
+      qid: q.id,
+      concept: q.concept,
+      when: q.when,
+      correct: optionId === q.correct,
+    },
+  ];
+  emit();
+  return true;
 }
 
 export function pickOption(optionId) {

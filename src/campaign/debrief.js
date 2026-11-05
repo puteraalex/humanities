@@ -1,5 +1,7 @@
 import { CONFIG, runMission } from '../engine/index.js';
 import { buildEngineState, totals } from './loadout.js';
+import { learningSummary } from './learning.js';
+
 
 const round = Math.round;
 
@@ -264,5 +266,6 @@ export function buildDebrief(game) {
     trail: buildTrail(game, startState, groups, dry),
     ...buildReview(game, groups, dry),
     whatIf: whatIf(game),
+    learning: learningSummary(game),
   };
 }

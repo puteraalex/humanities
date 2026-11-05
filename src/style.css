@@ -153,4 +153,9 @@ tr.mine th, tr.mine td { background: rgba(255, 122, 47, 0.15); }
 .trail li.effect { border-color: var(--bad); }
 .trail li.outcome { border-color: var(--ok); }
 .trail small { color: var(--muted); }
+.quiz { margin: 8px 0; }
+.quiz .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-top: 8px; }
+.right { color: var(--ok); font-weight: bold; }
+.wrong { color: var(--warn); font-weight: bold; }
+.verdict { border-left: 4px solid var(--water); padding: 4px 10px; background: rgba(63, 208, 232, 0.08); }
  }

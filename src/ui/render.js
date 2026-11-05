@@ -1,5 +1,6 @@
 import { CONFIG } from '../engine/index.js';
-import { getPending } from '../state/store.js';
+import { getPending, getPendingQuestion } from '../state/store.js';
+import { questionHtml } from './quiz.js';
 import { renderPrep } from './renderPrep.js';
 import { cardHtml, sourcesHtml } from './science.js';
 import { renderDebrief } from './renderDebrief.js';
@@ -158,10 +159,17 @@ function renderDecision(game) {
     return;
   }
 
-  const pending = getPending();
+   const pending = getPending();
   if (pending) {
-    const options = pending.options
-      .map(
+    const question = getPendingQuestion();
+    if (question) {
+      el.innerHTML = `
+        <h2>Prediction time: ${pending.title}</h2>
+        <p class="note">Guess first. You will see how you did after the mission.</p>
+        ${questionHtml(question)}`;
+      return;
+    }
+    const options = pending.options.map(
         (o) => `
         <div class="option">
           <button data-option="${o.id}">${o.label}</button>
