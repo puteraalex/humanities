@@ -1,5 +1,6 @@
 import { CONFIG } from '../engine/index.js';
 import { getPending } from '../state/store.js';
+import { renderPrep } from './renderPrep.js';
 
 const $ = (id) => document.getElementById(id);
 const pct = (v, max = 100) => Math.max(0, Math.min(100, Math.round((v / max) * 100)));
@@ -185,6 +186,13 @@ function renderDecision(game) {
 }
 
 export function renderAll(game) {
+  const prepping = game.phase === 'prep';
+  document.getElementById('prep').hidden = !prepping;
+  document.getElementById('app').hidden = prepping;
+  if (prepping) {
+    renderPrep(game);
+    return;
+  }
   renderTop(game);
   renderEnv(game);
   renderSystems(game);
