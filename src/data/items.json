@@ -1,0 +1,64 @@
+[
+  {
+    "id": "solar-array",
+    "name": "Big Solar Array",
+    "cost": 20,
+    "mass": 12,
+    "maxQty": 2,
+    "description": "Turns sunlight into electricity.",
+    "benefit": "More power for every system.",
+    "tradeoff": "Heavy and costly, and dust can still block sunlight.",
+    "effects": [{ "path": "power.generation", "add": 50 }]
+  },
+  {
+    "id": "compact-solar",
+    "name": "Compact Solar Panels",
+    "cost": 12,
+    "mass": 5,
+    "maxQty": 2,
+    "description": "Small panels that fold flat.",
+    "benefit": "Light, so they leave room for other gear.",
+    "tradeoff": "Less power for the price.",
+    "effects": [{ "path": "power.generation", "add": 25 }]
+  },
+  {
+    "id": "battery-pack",
+    "name": "Battery Pack",
+    "cost": 15,
+    "mass": 10,
+    "maxQty": 2,
+    "description": "Stores spare energy.",
+    "benefit": "Keeps systems running when sunlight drops.",
+    "tradeoff": "Heavy, and it makes no power by itself.",
+    "effects": [
+      { "path": "power.batteryMax", "add": 40 },
+      { "path": "power.battery", "add": 40 }
+    ]
+  },
+  {
+    "id": "radiation-shield",
+    "name": "Radiation Shield Wall",
+    "cost": 25,
+    "mass": 15,
+    "maxQty": 2,
+    "description": "Thick material that blocks harmful particles.",
+    "benefit": "The crew gets less radiation.",
+    "tradeoff": "The most expensive and heaviest item.",
+    "effects": [{ "path": "protection.shielding", "add": 0.2, "max": 0.95 }]
+  },
+  {
+    "id": "extra-supplies",
+    "name": "Extra Supplies Crate",
+    "cost": 10,
+    "mass": 8,
+    "maxQty": 2,
+    "description": "Spare oxygen, water and food.",
+    "benefit": "A safety cushion if something goes wrong.",
+    "tradeoff": "Uses cargo space that could carry equipment.",
+    "effects": [
+      { "path": "stocks.o2", "add": 15, "max": 100 },
+      { "path": "stocks.water", "add": 15, "max": 100 },
+      { "path": "stocks.food", "add": 15, "max": 100 }
+    ]
+  }
+]
