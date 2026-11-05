@@ -169,3 +169,41 @@ export function showDebrief() {
   emit();
   return true;
 }
+
+// ---- Title and story screens (UI only, not part of the game state) ----
+let screen = null; // 'title' | 'story' | null
+let storyStep = 0;
+
+export function getScreen() {
+  return screen;
+}
+
+export function setScreen(name) {
+  screen = name;
+  if (game) emit();
+}
+
+export function getStoryStep() {
+  return storyStep;
+}
+
+export function startStory() {
+  screen = 'story';
+  storyStep = 0;
+  if (game) emit();
+}
+
+export function nextStory(total) {
+  storyStep += 1;
+  if (storyStep >= total) {
+    screen = null;
+    storyStep = 0;
+  }
+  if (game) emit();
+}
+
+export function skipStory() {
+  screen = null;
+  storyStep = 0;
+  if (game) emit();
+}

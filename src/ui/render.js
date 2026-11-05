@@ -1,5 +1,6 @@
 import { CONFIG } from '../engine/index.js';
-import { getPending, getPendingQuestion } from '../state/store.js';
+import { getPending, getPendingQuestion, getScreen } from '../state/store.js';
+import { renderTitle, renderStory } from './renderTitle.js';
 import { questionHtml } from './quiz.js';
 import { renderPrep } from './renderPrep.js';
 import { cardHtml, sourcesHtml } from './science.js';
@@ -200,22 +201,36 @@ function renderDecision(game) {
     <button class="primary" data-action="end-day">End day</button>`;
 }
 
+const VIEW_NAMES = {
+  title: 'Humanities title screen',
+  story: 'Story introduction',
+  prep: 'Earth preparation',
+  colony: 'Mars outpost',
+  debrief: 'Mission debrief',
+};
+let lastView = '';
+
 export function renderAll(game) {
-  const phase = game.phase;
-  document.getElementById('prep').hidden = phase !== 'prep';
-  document.getElementById('app').hidden = phase !== 'colony';
-  document.getElementById('debrief').hidden = phase !== 'debrief';
-  if (phase === 'prep') {
-    renderPrep(game);
-    return;
+  const view = getScreen() || game.phase;
+  for (const id of ['title', 'story', 'prep', 'debrief']) {
+    document.getElementById(id).hidden = view !== id;
   }
-  if (phase === 'debrief') {
-    renderDebrief(game);
-    return;
+  document.getElementById('app').hidden = view !== 'colony';
+
+  if (view === 'title') renderTitle();
+  else if (view === 'story') renderStory();
+  else if (view === 'prep') renderPrep(game);
+  else if (view === 'debrief') renderDebrief(game);
+  else {
+    renderTop(game);
+    renderEnv(game);
+    renderSystems(game);
+    renderAlerts(game);
+    renderDecision(game);
   }
-  renderTop(game);
-  renderEnv(game);
-  renderSystems(game);
-  renderAlerts(game);
-  renderDecision(game);
+
+  if (view !== lastView) {
+    $('announce').textContent = VIEW_NAMES[view] || '';
+    lastView = view;
+  }
 }

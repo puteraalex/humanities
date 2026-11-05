@@ -158,4 +158,42 @@ tr.mine th, tr.mine td { background: rgba(255, 122, 47, 0.15); }
 .right { color: var(--ok); font-weight: bold; }
 .wrong { color: var(--warn); font-weight: bold; }
 .verdict { border-left: 4px solid var(--water); padding: 4px 10px; background: rgba(63, 208, 232, 0.08); }
- }
+/* ---- Milestone 9: accessibility, pixel look, small screens ---- */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+:focus-visible { outline: 3px solid var(--water); outline-offset: 2px; }
+
+#title, #story { max-width: 760px; margin: 0 auto; padding: 16px 8px; display: grid; gap: 12px; }
+.hero { text-align: center; padding: 28px 16px; }
+.tagline { color: var(--muted); font-size: 1.15rem; margin: 10px 0 18px; }
+.hero button { margin: 6px; }
+
+/* pixel look: square corners, hard shadows, chunky meters */
+.panel, .view, .item, .option, .tile, .card, .alert, .trail li, .quiz { border-radius: 0; }
+.panel { border-width: 2px; box-shadow: 4px 4px 0 #000; }
+.meter-bar, .fill { border-radius: 0; }
+.meter-bar { height: 14px; border: 2px solid rgba(255, 255, 255, 0.35); }
+button { border-radius: 0; box-shadow: 0 4px 0 #000; }
+button:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 #000; }
+h1, h2 { font-family: "Press Start 2P", ui-monospace, monospace; }
+h1 { font-size: 1.3rem; line-height: 1.5; }
+h2 { font-size: 0.8rem; line-height: 1.7; }
+.brand h1 { font-size: 1.05rem; }
+.prep-head h1 { letter-spacing: 0; }
+
+/* readable small text */
+.note { font-size: 0.95rem; }
+.tag { font-size: 0.8rem; }
+small { font-size: 0.9rem; }
+
+@media (max-width: 600px) {
+  .tiles { grid-template-columns: 1fr; }
+  #topbar { gap: 8px; }
+  .meter { min-width: 100%; }
+  h1 { font-size: 1rem; }
+  .hero { padding: 18px 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+}

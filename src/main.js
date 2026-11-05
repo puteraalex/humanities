@@ -1,4 +1,5 @@
 import './style.css';
+import '@fontsource/press-start-2p';
 import Phaser from 'phaser';
 import ColonyScene from './scenes/ColonyScene.js';
 import {
@@ -14,8 +15,13 @@ import {
   buy,
   sell,
   launch,
+  setScreen,
+  startStory,
+  nextStory,
+  skipStory,
 } from './state/store.js';
 import { renderAll } from './ui/render.js';
+import { STORY } from './ui/renderTitle.js';
 
 let phaserGame = null;
 
@@ -31,6 +37,7 @@ function ensurePhaser(game) {
     parent: 'game',
     width: 960,
     height: 540,
+    pixelArt: true,
     backgroundColor: '#14100e',
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     scene: [ColonyScene],
@@ -40,6 +47,7 @@ function ensurePhaser(game) {
 startGame(1);
 subscribe(renderAll); // must come first so the container is visible before Phaser starts
 subscribe(ensurePhaser);
+setScreen('title');
 renderAll(getGame());
 
 document.addEventListener('click', (e) => {
@@ -62,6 +70,12 @@ document.addEventListener('click', (e) => {
     answerQuestion(questionId, optionId);
   } else if (option) {
     pickOption(option.dataset.option);
+  } else if (name === 'start-story') {
+    startStory();
+  } else if (name === 'story-next') {
+    nextStory(STORY.length);
+  } else if (name === 'skip-intro') {
+    skipStory();
   } else if (name === 'launch') {
     launch();
   } else if (name === 'end-day') {
@@ -77,11 +91,12 @@ document.addEventListener('click', (e) => {
   }
 
   // keep keyboard focus on a sensible button after the screen re-renders
-  const fallback =
-    document.querySelector('#prep:not([hidden]) button:not([disabled])') ||
-    document.querySelector('#decision button') ||
-    document.querySelector('#debrief:not([hidden]) button');
+  const fallback = document.querySelector(
+    '#title:not([hidden]) button, #story:not([hidden]) button, #prep:not([hidden]) button:not([disabled]), #debrief:not([hidden]) button, #app:not([hidden]) #decision button'
+  );
   const target = (focusSelector && document.querySelector(focusSelector)) || fallback;
   if (target && !target.disabled) target.focus({ preventScroll: true });
-  if (name === 'debrief' || name === 'retry-same' || name === 'restart') window.scrollTo(0, 0);
+  if (['start-story', 'story-next', 'skip-intro', 'debrief', 'retry-same', 'restart'].includes(name)) {
+    window.scrollTo(0, 0);
+  }
 });

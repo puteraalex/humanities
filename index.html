@@ -3,18 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Humanities</title>
+    <title>Humanities: Mars Outpost Trainer</title>
   </head>
   <body>
-    <div id="prep" hidden></div>
-    <div id="debrief" hidden></div>
-    <div id="app">
+    <div id="announce" class="sr-only" aria-live="polite"></div>
+    <main id="title" hidden></main>
+    <main id="story" hidden></main>
+    <main id="prep" hidden></main>
+    <main id="debrief" hidden></main>
+    <div id="app" hidden>
       <header id="topbar" class="panel"></header>
-      <aside id="env" class="panel"></aside>
-      <main class="view"><div id="game"></div></main>
-      <aside id="alerts" class="panel" aria-live="polite"></aside>
-      <section id="systems" class="panel"></section>
-      <section id="decision" class="panel"></section>
+      <aside id="env" class="panel" aria-label="Outpost conditions"></aside>
+      <main class="view"><div id="game" role="img" aria-label="Illustration of the Mars outpost"></div></main>
+      <aside id="alerts" class="panel" aria-live="polite" aria-label="Mission alerts"></aside>
+      <section id="systems" class="panel" aria-label="Outpost systems"></section>
+      <section id="decision" class="panel" aria-label="Decisions"></section>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

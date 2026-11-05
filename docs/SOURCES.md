@@ -6,3 +6,8 @@ Every real data source, derived value and game-rule assumption is listed here.
 - NASA/JPL release 2024-080 (June 10, 2024): the May 20, 2024 solar storm at Mars. Curiosity RAD measured about 8,100 micrograys, compared by NASA to 30 chest X-rays. Archived, not live.
 ## Game rules
 - The 30-point burst, radiation points, shield percentages, sheltering effects, all costs, masses and meters are invented for play.
+# Credits
+- Real data: NASA/JPL release 2024-080 (June 10, 2024) about the May 2024 solar storm at Mars. Archived, not live.
+- Phaser 3 (MIT license). Vite (MIT license).
+- Press Start 2P font by CodeMan38 (SIL Open Font License), via the @fontsource package.
+- This game is independent. It is not made by, affiliated with, or endorsed by NASA.
