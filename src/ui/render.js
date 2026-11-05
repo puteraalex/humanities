@@ -1,6 +1,8 @@
 import { CONFIG } from '../engine/index.js';
 import { getPending } from '../state/store.js';
 import { renderPrep } from './renderPrep.js';
+import { cardHtml, sourcesHtml } from './science.js';
+import { renderDebrief } from './renderDebrief.js';
 
 const $ = (id) => document.getElementById(id);
 const pct = (v, max = 100) => Math.max(0, Math.min(100, Math.round((v / max) * 100)));
@@ -31,6 +33,7 @@ const EXPLAIN = {
   'empty:water': 'The water ran out! The crew is in danger.',
   'empty:food': 'The food ran out! The crew is getting weak.',
   'over-limit:protection': 'The crew has had too much radiation. Health is dropping.',
+  'burst:protection': 'A burst of radiation from the solar storm reached the outpost. Your shielding and your choice decided how much got through.',
 };
 const DETAIL = {
   lifeSupport: (s) => `Air ${pct(s.stocks.o2)}% · Water ${pct(s.stocks.water)}%`,
@@ -97,7 +100,8 @@ function renderEnv(game) {
       <dt>Power from solar panels</dt>
       <dd>${s.power.generation} units <span class="tag">game rule</span></dd>
     </dl>
-    <p class="note">These numbers are game rules for now. Real NASA data comes in a later update.</p>`;
+    <p class="note">These numbers are game rules. The solar storm event is based on a real NASA measurement.</p>
+    ${sourcesHtml()}`;
 }
 
 function renderSystems(game) {
@@ -126,7 +130,10 @@ function renderAlerts(game) {
   if (game.lastDay) {
     for (const id of game.lastDay.activeEvents) {
       const ev = game.events.find((e) => e.id === id);
-      parts.push(`<div class="alert bad"><strong>${ev.title}</strong><br>Sunlight is down by ${Math.round(ev.dustLoss * 100)}%.</div>`);
+      const detail = ev.burst
+        ? 'A burst of radiation reached the outpost.'
+        : `Sunlight is down by ${Math.round((ev.dustLoss ?? 0) * 100)}%.`;
+      parts.push(`<div class="alert bad"><strong>${ev.title}</strong><br>${detail}</div>`);
     }
   }
   if (!parts.length) parts.push('<p class="note">No alerts. All is calm.</p>');
@@ -147,8 +154,7 @@ function renderDecision(game) {
         <li>Food left: ${Math.round(s.stocks.food)}%</li>
         <li>Radiation: ${Math.round(s.protection.exposure)} of ${CONFIG.exposureLimit}</li>
       </ul>
-      <p class="note">A full debrief that explains why comes in a later update.</p>
-      <button class="primary" data-action="restart">Play again</button>`;
+        <button class="primary" data-action="debrief">See the mission debrief</button>`;
     return;
   }
 
@@ -168,6 +174,7 @@ function renderDecision(game) {
     el.innerHTML = `
       <h2>Engineering decision: ${pending.title}</h2>
       <p>${pending.prompt}</p>
+      ${pending.cardId ? cardHtml(pending.cardId) : ''}
       <div class="options">${options}</div>`;
     return;
   }
@@ -186,11 +193,16 @@ function renderDecision(game) {
 }
 
 export function renderAll(game) {
-  const prepping = game.phase === 'prep';
-  document.getElementById('prep').hidden = !prepping;
-  document.getElementById('app').hidden = prepping;
-  if (prepping) {
+  const phase = game.phase;
+  document.getElementById('prep').hidden = phase !== 'prep';
+  document.getElementById('app').hidden = phase !== 'colony';
+  document.getElementById('debrief').hidden = phase !== 'debrief';
+  if (phase === 'prep') {
     renderPrep(game);
+    return;
+  }
+  if (phase === 'debrief') {
+    renderDebrief(game);
     return;
   }
   renderTop(game);

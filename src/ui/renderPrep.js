@@ -1,5 +1,5 @@
 import { totals, canAdd } from '../campaign/index.js';
-
+import { sourcesHtml } from './science.js';
 const REASONS = {
   'over-budget': 'Not enough budget',
   'over-mass': 'Too heavy for the rocket',
@@ -59,7 +59,8 @@ export function renderPrep(game) {
       <h2>Equipment</h2>
       <div class="items">${cards}</div>
       <p class="note">All costs, masses and effects are game rules, not real spacecraft specs.</p>
-    </section>
+      ${sourcesHtml()}
+      </section>
     <section class="panel">
       <h2>Your cargo</h2>
       ${list ? `<ul>${list}</ul>` : '<p class="note">Nothing yet. A bare outpost will struggle when trouble comes.</p>'}

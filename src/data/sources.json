@@ -1,0 +1,22 @@
+[
+  {
+    "id": "nasa-mars-spe-2024",
+    "name": "NASA/JPL: NASA Watches Mars Light Up During Epic Solar Storm (release 2024-080, June 10, 2024)",
+    "url": "https://www.nasa.gov/?p=670127",
+    "kind": "measured",
+    "archived": true,
+    "used": "On May 20, 2024, a solar flare estimated at X12 was followed by charged particles that reached Mars within tens of minutes. Curiosity's Radiation Assessment Detector (RAD) measured about 8,100 micrograys at the surface, which NASA compared to 30 chest X-rays. NASA said this was not deadly. Cliffs or lava tubes could give extra shielding.",
+    "affects": "Inspires the Solar storm event: a one-day radiation burst. The outpost's shielding and the sheltering choice decide how much of the burst reaches the crew.",
+    "simplified": "The 30-point burst, radiation points, shield percentages and the research cost of sheltering are game rules. The dose is not converted into real health effects."
+  },
+  {
+    "id": "game-rules",
+    "name": "Game rules (invented for this game)",
+    "url": null,
+    "kind": "game-rule",
+    "archived": false,
+    "used": "Nothing real: budgets, masses, power units, the dust storm strength, the meters and all equipment effects are invented for play.",
+    "affects": "Everything that is not listed under a real source.",
+    "simplified": "All of it. These are not NASA numbers or real engineering specs."
+  }
+]

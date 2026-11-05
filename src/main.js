@@ -8,6 +8,8 @@ import {
   endDay,
   pickOption,
   restart,
+  retrySame,
+  showDebrief,
   buy,
   sell,
   launch,
@@ -44,6 +46,7 @@ document.addEventListener('click', (e) => {
   const sellBtn = e.target.closest('[data-sell]');
   const option = e.target.closest('[data-option]');
   const action = e.target.closest('[data-action]');
+  const name = action ? action.dataset.action : null;
   let focusSelector = null;
 
   if (buyBtn) {
@@ -54,11 +57,15 @@ document.addEventListener('click', (e) => {
     focusSelector = `[data-sell="${sellBtn.dataset.sell}"]`;
   } else if (option) {
     pickOption(option.dataset.option);
-  } else if (action && action.dataset.action === 'launch') {
+  } else if (name === 'launch') {
     launch();
-  } else if (action && action.dataset.action === 'end-day') {
+  } else if (name === 'end-day') {
     endDay();
-  } else if (action && action.dataset.action === 'restart') {
+  } else if (name === 'debrief') {
+    showDebrief();
+  } else if (name === 'retry-same') {
+    retrySame();
+  } else if (name === 'restart') {
     restart();
   } else {
     return;
@@ -67,7 +74,9 @@ document.addEventListener('click', (e) => {
   // keep keyboard focus on a sensible button after the screen re-renders
   const fallback =
     document.querySelector('#prep:not([hidden]) button:not([disabled])') ||
-    document.querySelector('#decision button');
+    document.querySelector('#decision button') ||
+    document.querySelector('#debrief:not([hidden]) button');
   const target = (focusSelector && document.querySelector(focusSelector)) || fallback;
   if (target && !target.disabled) target.focus();
+  if (name === 'debrief' || name === 'retry-same' || name === 'restart') window.scrollTo(0, 0);
 });

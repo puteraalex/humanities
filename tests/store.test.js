@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   startGame,
   restart,
+  retrySame,
+  showDebrief,
   getGame,
   getPending,
   endDay,
@@ -69,7 +71,8 @@ describe('colony phase', () => {
     prepAndLaunch(1);
     let guard = 0;
     while (!getGame().state.finished && guard++ < 100) {
-      if (getPending()) pickOption('protect-crew');
+            const p = getPending();
+      if (p) pickOption(p.options[0].id);
       endDay();
     }
     expect(getGame().state.finished).toBe(true);
@@ -82,5 +85,27 @@ describe('colony phase', () => {
     expect(getGame().state.sol).toBe(0);
     expect(getGame().campaign.loadout).toEqual(oldLoadout);
     expect(getGame().campaign.decisionsLog.length).toBe(oldLoadout.length);
+
+  });describe('debrief', () => {
+  it('opens after the mission ends and can retry with the same seed', () => {
+    prepAndLaunch(1);
+    expect(showDebrief()).toBe(false);
+    let guard = 0;
+    while (!getGame().state.finished && guard++ < 100) {
+      const p = getPending();
+      if (p) pickOption(p.options[0].id);
+      endDay();
+    }
+    expect(getGame().history.length).toBe(getGame().state.sol);
+    expect(showDebrief()).toBe(true);
+    expect(getGame().phase).toBe('debrief');
+
+    const loadout = [...getGame().campaign.loadout];
+    retrySame();
+    expect(getGame().phase).toBe('prep');
+    expect(getGame().seed).toBe(1);
+    expect(getGame().campaign.loadout).toEqual(loadout);
+    expect(getGame().history).toEqual([]);
   });
+});
 });

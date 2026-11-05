@@ -49,29 +49,47 @@ export function stepDay(state, scenario, events) {
 
   let dustLoss = 0;
   let priority = CONFIG.defaultPriority;
+  let researchFactor = 1;
+  let burst = 0;
   const causes = [];
 
   for (const slot of active) {
     const ev = byId(events, slot.eventId);
-    dustLoss = Math.max(dustLoss, ev.dustLoss);
+    dustLoss = Math.max(dustLoss, ev.dustLoss ?? 0);
     const optionId = scenario.choices[ev.id] ?? ev.defaultOption;
     const option = ev.options.find((o) => o.id === optionId);
-    priority = option.priority;
+    if (option.priority) priority = option.priority;
+    if (option.researchFactor !== undefined) {
+      researchFactor = Math.min(researchFactor, option.researchFactor);
+    }
+    // GAME RULE: a radiation burst, reduced by the outpost's shielding and the player's choice.
+    if (ev.burst && day === slot.start) {
+      burst += ev.burst * (option.exposureFactor ?? 1) * (1 - state.protection.shielding);
+    }
     causes.push(`event:${ev.id}`, `decision:${ev.id}:${option.id}`);
   }
 
   const ready = { ...state, env: { ...state.env, dustLoss } };
   const result = tick(ready, priority);
-  return {
-    state: result.state,
-    effects: result.effects.map((e) => ({ ...e, causes })),
-    day,
-    activeEvents: active.map((s) => s.eventId),
-  };
+  let next = result.state;
+  const effects = result.effects.map((e) => ({ ...e, causes }));
+
+  if (researchFactor !== 1) {
+    const gained = next.research - state.research;
+    next = { ...next, research: state.research + gained * researchFactor };
+  }
+  if (burst > 0) {
+    next = {
+      ...next,
+      protection: { ...next.protection, exposure: next.protection.exposure + burst },
+    };
+    effects.push({ system: 'protection', kind: 'burst', points: Math.round(burst), causes });
+  }
+
+  return { state: next, effects, day, activeEvents: active.map((s) => s.eventId) };
 }
 
 // Plays a whole mission. chooser(event) returns an option id, or null for the default.
-// Used by tests now and by "What if?" replays later.
 export function runMission(startState, seed, events, chooser = () => null) {
   let scenario = createScenario(seed, events);
   let state = startState;

@@ -6,6 +6,7 @@
     "duration": 5,
     "warnSols": 1,
     "dustLoss": 0.6,
+    "cardId": "dust-power",
     "prompt": "A dust storm will block sunlight for a few days. Where should the power go first?",
     "defaultOption": "protect-crew",
     "options": [
@@ -32,6 +33,47 @@
         "benefit": "Research keeps making progress.",
         "cost": "Less radiation protection and a shrinking greenhouse.",
         "why": "In this game, research needs power too. Choosing it means other systems wait."
+      }
+    ]
+  },
+  {
+    "id": "solar-storm",
+    "title": "Solar storm!",
+    "startRange": [13, 16],
+    "duration": 1,
+    "warnSols": 1,
+    "dustLoss": 0,
+    "burst": 30,
+    "cardId": "spe-2024",
+    "prompt": "A big solar flare was spotted. Fast charged particles will reach the outpost tomorrow. How should the crew handle the radiation?",
+    "defaultOption": "partial-shelter",
+    "options": [
+      {
+        "id": "full-shelter",
+        "label": "Everyone shelters",
+        "exposureFactor": 0.4,
+        "researchFactor": 0,
+        "benefit": "Much less radiation.",
+        "cost": "No research that day.",
+        "why": "Thick walls block more particles, but crew inside a shelter cannot do their work."
+      },
+      {
+        "id": "partial-shelter",
+        "label": "Shelter part of the day",
+        "exposureFactor": 0.7,
+        "researchFactor": 0.5,
+        "benefit": "Some protection and some research.",
+        "cost": "More radiation than full shelter, less research than normal.",
+        "why": "In this game, time in shelter lowers radiation but also lowers work done."
+      },
+      {
+        "id": "keep-working",
+        "label": "Keep working",
+        "exposureFactor": 1,
+        "researchFactor": 1,
+        "benefit": "Research continues as normal.",
+        "cost": "The most radiation reaches the crew.",
+        "why": "In this game, only the outpost's shielding protects a crew that stays at work."
       }
     ]
   }

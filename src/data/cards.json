@@ -1,0 +1,18 @@
+[
+  {
+    "id": "spe-2024",
+    "title": "Real science: a solar storm hit Mars",
+    "kind": "measured",
+    "text": "On May 20, 2024, a huge solar flare was followed by fast charged particles that reached Mars within tens of minutes. A radiation detector on NASA's Curiosity rover measured about 8,100 micrograys at the surface. NASA compared that to 30 chest X-rays. It was not deadly, but it was the biggest jump that detector had seen since landing. Thick rock, like cliffs or lava tubes, could give astronauts extra shielding.",
+    "sourceId": "nasa-mars-spe-2024",
+    "gameNote": "Game rule: this storm gives a 30-point radiation burst. Points are game units, not real units."
+  },
+  {
+    "id": "dust-power",
+    "title": "Why dust matters for power",
+    "kind": "game-rule",
+    "text": "Solar panels make power from sunlight. When dust fills the air, less light reaches them, so there is less power to share between your systems.",
+    "sourceId": "game-rules",
+    "gameNote": "Game rule: this storm blocks 60% of sunlight for 5 days. The numbers are invented, and real data on dust storms is not used yet."
+  }
+]

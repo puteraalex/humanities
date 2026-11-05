@@ -12,7 +12,7 @@ import {
 import { createCampaign, addItem, buildEngineState } from '../src/campaign/index.js';
 
 // Storm always starts on day 4 so the tests can compare choices fairly.
-const FIXED = EVENTS.map((e) => ({ ...e, startRange: [4, 4] }));
+const FIXED = EVENTS.filter((e) => e.id === 'dust-storm').map((e) => ({ ...e, startRange: [4, 4] }));
 
 function prepared() {
   let c = createCampaign();

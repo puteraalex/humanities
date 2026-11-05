@@ -1,7 +1,13 @@
 import EVENTS from '../data/events.json';
 import ITEMS from '../data/items.json';
 import { createCampaign, addItem, removeItem, buildEngineState } from '../campaign/index.js';
-import { createScenario, choose, pendingDecision, stepDay } from '../engine/index.js';
+import {
+  createScenario,
+  choose,
+  pendingDecision,
+  stepDay,
+  historyEntry,
+} from '../engine/index.js';
 
 const listeners = new Set();
 let game = null;
@@ -19,13 +25,14 @@ function makeGame(seed, loadout = []) {
   }
   return {
     seed,
-    phase: 'prep', // 'prep' -> 'colony'
+    phase: 'prep', // 'prep' -> 'colony' -> 'debrief'
     campaign,
     state: buildEngineState(campaign, ITEMS),
     scenario: createScenario(seed, EVENTS),
     events: EVENTS,
     items: ITEMS,
     lastDay: null,
+    history: [],
   };
 }
 
@@ -44,9 +51,16 @@ export function startGame(seed = 1) {
   return game;
 }
 
-// Replay: new seed (so the storm may come on a different day), same loadout to adjust.
+// New seed (storms may come on different days), same loadout to adjust.
 export function restart() {
   game = makeGame(game.seed + 1, game.campaign.loadout);
+  emit();
+  return game;
+}
+
+// Same seed (same storm days) and same loadout: change only your choices.
+export function retrySame() {
+  game = makeGame(game.seed, game.campaign.loadout);
   emit();
   return game;
 }
@@ -73,7 +87,7 @@ export function sell(itemId) {
 
 export function launch() {
   if (game.phase !== 'prep') return false;
-  game = { ...game, phase: 'colony', lastDay: null };
+  game = { ...game, phase: 'colony', lastDay: null, history: [] };
   emit();
   return true;
 }
@@ -94,7 +108,19 @@ export function pickOption(optionId) {
 export function endDay() {
   if (game.phase !== 'colony' || game.state.finished || getPending()) return false;
   const step = stepDay(game.state, game.scenario, EVENTS);
-  game = { ...game, state: step.state, lastDay: step };
+  game = {
+    ...game,
+    state: step.state,
+    lastDay: step,
+    history: [...game.history, historyEntry(step)],
+  };
+  emit();
+  return true;
+}
+
+export function showDebrief() {
+  if (game.phase !== 'colony' || !game.state.finished) return false;
+  game = { ...game, phase: 'debrief' };
   emit();
   return true;
 }
