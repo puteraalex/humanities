@@ -1,0 +1,38 @@
+[
+  {
+    "id": "dust-storm",
+    "title": "Dust storm coming!",
+    "startRange": [4, 8],
+    "duration": 5,
+    "warnSols": 1,
+    "dustLoss": 0.6,
+    "prompt": "A dust storm will block sunlight for a few days. Where should the power go first?",
+    "defaultOption": "protect-crew",
+    "options": [
+      {
+        "id": "protect-crew",
+        "label": "Protect the crew",
+        "priority": ["lifeSupport", "protection", "greenhouse", "research"],
+        "benefit": "The crew gets less radiation.",
+        "cost": "The greenhouse gets less power, so crops shrink.",
+        "why": "In this game, shields only work when they have power. Plants also need power to grow, so food runs low later."
+      },
+      {
+        "id": "protect-crops",
+        "label": "Protect the crops",
+        "priority": ["lifeSupport", "greenhouse", "protection", "research"],
+        "benefit": "The greenhouse keeps growing food.",
+        "cost": "The crew gets more radiation.",
+        "why": "In this game, a working greenhouse keeps food coming in, but a shield without power lets more radiation through."
+      },
+      {
+        "id": "keep-science",
+        "label": "Keep the science going",
+        "priority": ["lifeSupport", "research", "protection", "greenhouse"],
+        "benefit": "Research keeps making progress.",
+        "cost": "Less radiation protection and a shrinking greenhouse.",
+        "why": "In this game, research needs power too. Choosing it means other systems wait."
+      }
+    ]
+  }
+]
