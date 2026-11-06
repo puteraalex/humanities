@@ -196,4 +196,15 @@ small { font-size: 0.9rem; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+/* ---- Milestone 11: a bigger world view ---- */
+#app {
+  grid-template-columns: 220px 1fr 240px;
+  grid-template-rows: auto minmax(340px, 62vh) auto;
+}
+#game canvas { image-rendering: pixelated; }
+.view { background: #0e1230; }
+@media (max-width: 900px) {
+  #app { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .view { min-height: 260px; }
+}
 }

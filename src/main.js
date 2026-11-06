@@ -1,7 +1,7 @@
 import './style.css';
 import '@fontsource/press-start-2p';
 import Phaser from 'phaser';
-import ColonyScene from './scenes/ColonyScene.js';
+import OutpostScene from './scenes/OutpostScene.js';
 import {
   startGame,
   getGame,
@@ -26,22 +26,30 @@ import { STORY } from './ui/renderTitle.js';
 let phaserGame = null;
 
 // Phaser starts only after launch, when its container is visible.
+// If it fails, the reason is shown on the page and in the console.
 function ensurePhaser(game) {
   if (game.phase !== 'colony') return;
   if (phaserGame) {
     phaserGame.scale.refresh();
     return;
   }
-  phaserGame = new Phaser.Game({
-    type: Phaser.AUTO,
-    parent: 'game',
-    width: 960,
-    height: 540,
-    pixelArt: true,
-    backgroundColor: '#14100e',
-    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-    scene: [ColonyScene],
-  });
+  try {
+    console.info('Starting Phaser', Phaser.VERSION);
+    phaserGame = new Phaser.Game({
+      type: Phaser.AUTO,
+      parent: 'game',
+      width: 320,
+      height: 180,
+      pixelArt: true,
+      backgroundColor: '#14100e',
+      scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+      scene: [OutpostScene],
+    });
+  } catch (err) {
+    console.error('Phaser failed to start:', err);
+    const box = document.getElementById('game');
+    if (box) box.textContent = 'The scene could not start: ' + err.message;
+  }
 }
 
 startGame(1);
