@@ -6,6 +6,8 @@ import { renderPrep } from './renderPrep.js';
 import { cardHtml, sourcesHtml } from './science.js';
 import { renderDebrief } from './renderDebrief.js';
 import { renderDialogue, currentDialogue } from './renderDialogue.js';
+import { renderDayPanel } from './renderDay.js';
+
 
 const $ = (id) => document.getElementById(id);
 const pct = (v, max = 100) => Math.max(0, Math.min(100, Math.round((v / max) * 100)));
@@ -146,6 +148,7 @@ function renderAlerts(game) {
 function renderDecision(game) {
   const s = game.state;
   const el = $('decision');
+  if (renderDayPanel(game, el)) return;
 
   if (s.finished) {
     el.innerHTML = `

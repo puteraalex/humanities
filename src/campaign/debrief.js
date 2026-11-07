@@ -222,13 +222,18 @@ function buildReview(game, groups, dry) {
 export function whatIf(game) {
   const start = buildEngineState(game.campaign, game.items);
   const choiceOf = (ev) => game.scenario.choices[ev.id] ?? ev.defaultOption;
+  const focusFor = (day) => (game.focusLog && game.focusLog[day - 1]) || 'balanced';
   const happened = game.scenario.schedule.filter((s) => s.start <= game.state.sol);
   return happened.map((slot) => {
     const ev = game.events.find((e) => e.id === slot.eventId);
     const chosen = choiceOf(ev);
     const options = ev.options.map((o) => {
-      const run = runMission(start, game.seed, game.events, (pending) =>
-        pending.id === ev.id ? o.id : choiceOf(pending)
+      const run = runMission(
+        start,
+        game.seed,
+        game.events,
+        (pending) => (pending.id === ev.id ? o.id : choiceOf(pending)),
+        focusFor
       );
       return { id: o.id, label: o.label, chosen: o.id === chosen, ...summary(run.state) };
     });

@@ -239,6 +239,8 @@ export default class OutpostScene extends Phaser.Scene {
     if (task === 'doorway') return { x: DOOR_X + 14 };
     if (task === 'panels') return { x: PANEL_X0 + (this.visual.panelCount * PANEL_STEP) / 2, work: true };
     if (task === 'greenhouse') return { x: GH.x + 28, work: true };
+    if (task === 'science') return { x: DOOR_X - 16, work: true };
+    if (task === 'reinforce') return { x: HAB.x + 78, work: true };
     return null; // patrol
   }
 

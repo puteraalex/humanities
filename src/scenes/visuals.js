@@ -17,6 +17,8 @@ export function plantKey(stage, index) {
   return stage === 0 ? 'plant_dead' : `plant_${Math.max(1, stage - (index % 2))}`;
 }
 
+const FOCUS_TASK = { science: 'science', reinforce: 'reinforce', garden: 'greenhouse' };
+
 // Turns the game state into "what should the world look like".
 export function outpostVisuals(game, pendingEvent = null) {
   const s = game.state;
@@ -38,9 +40,13 @@ export function outpostVisuals(game, pendingEvent = null) {
 
   const stage = plantStage(s.crops);
 
+  // While the crew works, the astronaut goes to where the work is.
+  const working = game.day && game.day.stage === 'watch' ? FOCUS_TASK[game.day.focus] : null;
+
   let astronautTask = 'patrol';
   if (radiation === 'burst') astronautTask = 'shelter';
   else if (radiation === 'warning') astronautTask = 'doorway';
+  else if (working) astronautTask = working;
   else if (dust > 0.05) astronautTask = 'panels';
   else if (stage <= 1) astronautTask = 'greenhouse';
 

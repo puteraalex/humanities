@@ -1,5 +1,6 @@
 import { getPending, getPendingQuestion, advanceDialogue } from '../state/store.js';
 import { introLines, replyLines, SPEAKERS } from '../story/dialogue.js';
+import { briefingLines } from '../story/briefing.js';
 import { portraitUrl } from './portraits.js';
 
 // The look of the dialogue box lives here, so it works even if style.css is missing it.
@@ -41,7 +42,15 @@ if (typeof document !== 'undefined' && !window.__dialogueReady) {
 
 // The line that should be on screen right now, or null.
 export function currentDialogue(game) {
-  if (game.phase !== 'colony' || !game.story) return null;
+  if (game.phase !== 'colony') return null;
+
+  if (game.day && game.day.stage === 'briefing') {
+    const lines = briefingLines(game);
+    const line = lines[game.day.briefIndex];
+    if (line) return { kind: 'briefing', line, index: game.day.briefIndex, total: lines.length };
+  }
+
+  if (!game.story) return null;
 
   if (game.story.reply) {
     const { eventId, optionId, index } = game.story.reply;

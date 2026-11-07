@@ -1,6 +1,7 @@
 import { CONFIG } from './config.js';
 import { nextRandom } from './rng.js';
 import { tick } from './tick.js';
+import { FOCUS, SHIELD_MAX } from './focus.js';
 
 const byId = (events, id) => events.find((e) => e.id === id);
 
@@ -41,15 +42,16 @@ export function pendingDecision(state, scenario, events) {
   return null;
 }
 
-// Runs one day with any active events applied.
+// Runs one day with any active events applied, and the crew's focus for the day.
 // Effects carry "causes" so the debrief can explain what led to what.
-export function stepDay(state, scenario, events) {
+export function stepDay(state, scenario, events, focusId = 'balanced') {
   const day = state.sol + 1;
+  const focus = FOCUS[focusId] || FOCUS.balanced;
   const active = scenario.schedule.filter((s) => day >= s.start && day <= s.end);
 
   let dustLoss = 0;
   let priority = CONFIG.defaultPriority;
-  let researchFactor = 1;
+  let researchFactor = focus.research;
   let burst = 0;
   const causes = [];
 
@@ -59,9 +61,7 @@ export function stepDay(state, scenario, events) {
     const optionId = scenario.choices[ev.id] ?? ev.defaultOption;
     const option = ev.options.find((o) => o.id === optionId);
     if (option.priority) priority = option.priority;
-    if (option.researchFactor !== undefined) {
-      researchFactor = Math.min(researchFactor, option.researchFactor);
-    }
+    if (option.researchFactor !== undefined) researchFactor *= option.researchFactor;
     // GAME RULE: a radiation burst, reduced by the outpost's shielding and the player's choice.
     if (ev.burst && day === slot.start) {
       burst += ev.burst * (option.exposureFactor ?? 1) * (1 - state.protection.shielding);
@@ -76,7 +76,20 @@ export function stepDay(state, scenario, events) {
 
   if (researchFactor !== 1) {
     const gained = next.research - state.research;
-    next = { ...next, research: state.research + gained * researchFactor };
+    next = { ...next, research: Math.min(100, state.research + gained * researchFactor) };
+  }
+  // The crew's focus: stronger walls for good, or recovering crops.
+  if (focus.shielding) {
+    next = {
+      ...next,
+      protection: {
+        ...next.protection,
+        shielding: Math.min(SHIELD_MAX, next.protection.shielding + focus.shielding),
+      },
+    };
+  }
+  if (focus.crops) {
+    next = { ...next, crops: Math.min(100, next.crops + focus.crops) };
   }
   if (burst > 0) {
     next = {
@@ -90,7 +103,14 @@ export function stepDay(state, scenario, events) {
 }
 
 // Plays a whole mission. chooser(event) returns an option id, or null for the default.
-export function runMission(startState, seed, events, chooser = () => null) {
+// focusFor(day) says what the crew did each day. Used by tests and the "What if?" replays.
+export function runMission(
+  startState,
+  seed,
+  events,
+  chooser = () => null,
+  focusFor = () => 'balanced'
+) {
   let scenario = createScenario(seed, events);
   let state = startState;
   const log = [];
@@ -100,7 +120,7 @@ export function runMission(startState, seed, events, chooser = () => null) {
       const optionId = chooser(pending);
       if (optionId) scenario = choose(scenario, pending.id, optionId);
     }
-    const step = stepDay(state, scenario, events);
+    const step = stepDay(state, scenario, events, focusFor(state.sol + 1));
     state = step.state;
     log.push({ day: step.day, effects: step.effects });
   }

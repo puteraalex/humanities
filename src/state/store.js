@@ -8,8 +8,10 @@ import {
   pendingDecision,
   stepDay,
   historyEntry,
+  availableFocuses,
 } from '../engine/index.js';
 import { introLines, replyLines } from '../story/dialogue.js';
+import { briefingLines } from '../story/briefing.js';
 
 const listeners = new Set();
 let game = null;
@@ -42,6 +44,10 @@ function makeGame(seed, loadout = []) {
     answers: {},
     // where we are in the story talk: intro lines, finished intros, and the reply to a choice
     story: { introIndex: 0, introDone: {}, reply: null },
+    // where we are in the day: 'briefing' -> 'play' -> 'watch' -> 'report'
+    day: { stage: 'briefing', briefIndex: 0 },
+    // what the crew did each day (the debrief replays with this)
+    focusLog: [],
   };
 }
 
@@ -100,7 +106,14 @@ export function sell(itemId) {
 
 export function launch() {
   if (game.phase !== 'prep') return false;
-  game = { ...game, phase: 'colony', lastDay: null, history: [] };
+  game = {
+    ...game,
+    phase: 'colony',
+    lastDay: null,
+    history: [],
+    focusLog: [],
+    day: { stage: 'briefing', briefIndex: 0 },
+  };
   emit();
   return true;
 }
@@ -166,6 +179,21 @@ export function pickOption(optionId) {
 export function advanceDialogue() {
   if (game.phase !== 'colony') return false;
 
+  // the morning briefing
+  if (game.day.stage === 'briefing') {
+    const lines = briefingLines(game);
+    const nextIndex = game.day.briefIndex + 1;
+    game = {
+      ...game,
+      day:
+        nextIndex >= lines.length
+          ? { stage: 'play', briefIndex: 0 }
+          : { ...game.day, briefIndex: nextIndex },
+    };
+    emit();
+    return true;
+  }
+
   if (game.story.reply) {
     const { eventId, optionId, index } = game.story.reply;
     const lines = replyLines(eventId, optionId, game);
@@ -198,14 +226,53 @@ export function advanceDialogue() {
   return false;
 }
 
-export function endDay() {
-  if (game.phase !== 'colony' || game.state.finished || getPending()) return false;
-  const step = stepDay(game.state, game.scenario, EVENTS);
+// The player's choice for the day: what the crew spends it on. Runs the day.
+export function chooseAction(focusId) {
+  if (game.phase !== 'colony' || game.state.finished) return false;
+  if (game.day.stage !== 'play' || getPending()) return false;
+  const choice = availableFocuses(game.state).find((f) => f.id === focusId);
+  if (!choice || !choice.enabled) return false;
+
+  const before = game.state;
+  const step = stepDay(game.state, game.scenario, EVENTS, focusId);
   game = {
     ...game,
     state: step.state,
     lastDay: step,
     history: [...game.history, historyEntry(step)],
+    focusLog: [...game.focusLog, focusId],
+    day: { stage: 'watch', focus: focusId, before },
+  };
+  emit();
+  return true;
+}
+
+// After a few seconds of watching the outpost, the evening report comes up.
+export function finishWatch() {
+  if (game.phase !== 'colony' || game.day.stage !== 'watch') return false;
+  game = { ...game, day: { ...game.day, stage: 'report' } };
+  emit();
+  return true;
+}
+
+export function nextDay() {
+  if (game.phase !== 'colony' || game.day.stage !== 'report' || game.state.finished) return false;
+  game = { ...game, day: { stage: 'briefing', briefIndex: 0 } };
+  emit();
+  return true;
+}
+
+// Older, simpler way to run a day (used by the tests): no briefing, no report.
+export function endDay(focusId = 'balanced') {
+  if (game.phase !== 'colony' || game.state.finished || getPending()) return false;
+  const step = stepDay(game.state, game.scenario, EVENTS, focusId);
+  game = {
+    ...game,
+    state: step.state,
+    lastDay: step,
+    history: [...game.history, historyEntry(step)],
+    focusLog: [...game.focusLog, focusId],
+    day: { stage: 'play', briefIndex: 0 },
   };
   emit();
   return true;
