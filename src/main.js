@@ -9,6 +9,7 @@ import {
   endDay,
   pickOption,
   answerQuestion,
+  advanceDialogue,
   restart,
   retrySame,
   showDebrief,
@@ -78,6 +79,8 @@ document.addEventListener('click', (e) => {
     answerQuestion(questionId, optionId);
   } else if (option) {
     pickOption(option.dataset.option);
+  } else if (name === 'dialogue-next') {
+    advanceDialogue();
   } else if (name === 'start-story') {
     startStory();
   } else if (name === 'story-next') {
@@ -100,7 +103,7 @@ document.addEventListener('click', (e) => {
 
   // keep keyboard focus on a sensible button after the screen re-renders
   const fallback = document.querySelector(
-    '#title:not([hidden]) button, #story:not([hidden]) button, #prep:not([hidden]) button:not([disabled]), #debrief:not([hidden]) button, #app:not([hidden]) #decision button'
+    '#title:not([hidden]) button, #story:not([hidden]) button, #prep:not([hidden]) button:not([disabled]), #debrief:not([hidden]) button, #app:not([hidden]) #dialogue:not([hidden]) button, #app:not([hidden]) #decision button'
   );
   const target = (focusSelector && document.querySelector(focusSelector)) || fallback;
   if (target && !target.disabled) target.focus({ preventScroll: true });

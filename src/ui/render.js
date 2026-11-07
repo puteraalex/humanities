@@ -5,6 +5,7 @@ import { questionHtml } from './quiz.js';
 import { renderPrep } from './renderPrep.js';
 import { cardHtml, sourcesHtml } from './science.js';
 import { renderDebrief } from './renderDebrief.js';
+import { renderDialogue, currentDialogue } from './renderDialogue.js';
 
 const $ = (id) => document.getElementById(id);
 const pct = (v, max = 100) => Math.max(0, Math.min(100, Math.round((v / max) * 100)));
@@ -159,7 +160,10 @@ function renderDecision(game) {
         <button class="primary" data-action="debrief">See the mission debrief</button>`;
     return;
   }
-
+  if (currentDialogue(game)) {
+    el.innerHTML = '<h2>Incoming message</h2><p class="note">Read the message above, then press Next.</p>';
+    return;
+  }
    const pending = getPending();
   if (pending) {
     const question = getPendingQuestion();
@@ -227,6 +231,7 @@ export function renderAll(game) {
     renderSystems(game);
     renderAlerts(game);
     renderDecision(game);
+    renderDialogue(game);
   }
 
   if (view !== lastView) {

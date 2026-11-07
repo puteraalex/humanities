@@ -207,4 +207,36 @@ small { font-size: 0.9rem; }
   #app { grid-template-columns: 1fr; grid-template-rows: auto; }
   .view { min-height: 260px; }
 }
+/* ---- Milestone 12: dialogue box over the world ---- */
+.dialogue {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 8px;
+  z-index: 5;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: rgba(14, 18, 48, 0.95);
+  border: 2px solid var(--edge);
+  box-shadow: 4px 4px 0 #000;
+  padding: 10px 12px;
+}
+.dialogue .portrait {
+  width: 72px;
+  height: 72px;
+  flex: none;
+  image-rendering: pixelated;
+  border: 2px solid var(--edge);
+  background: #14100e;
+}
+.dialogue .said { flex: 1; }
+.dialogue .said strong { color: var(--edge); font-size: 1rem; }
+.dialogue .said p { font-size: 1.2rem; line-height: 1.4; margin-top: 4px; }
+.dialogue .count { color: var(--muted); font-size: 0.9rem; }
+@media (max-width: 600px) {
+  .dialogue { flex-wrap: wrap; }
+  .dialogue .portrait { width: 56px; height: 56px; }
+  .dialogue .said p { font-size: 1.05rem; }
+}
 }

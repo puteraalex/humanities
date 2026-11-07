@@ -9,6 +9,7 @@ import {
   stepDay,
   historyEntry,
 } from '../engine/index.js';
+import { introLines, replyLines } from '../story/dialogue.js';
 
 const listeners = new Set();
 let game = null;
@@ -39,6 +40,8 @@ function makeGame(seed, loadout = []) {
     lastDay: null,
     history: [],
     answers: {},
+    // where we are in the story talk: intro lines, finished intros, and the reply to a choice
+    story: { introIndex: 0, introDone: {}, reply: null },
   };
 }
 
@@ -142,12 +145,57 @@ export function answerQuestion(questionId, optionId) {
   return true;
 }
 
+// Picks an option, then queues the characters' reaction (if the story has one).
 export function pickOption(optionId) {
   const pending = getPending();
   if (!pending || !pending.options.some((o) => o.id === optionId)) return false;
-  game = { ...game, scenario: choose(game.scenario, pending.id, optionId) };
+  const next = { ...game, scenario: choose(game.scenario, pending.id, optionId) };
+  const lines = replyLines(pending.id, optionId, next);
+  game = {
+    ...next,
+    story: {
+      ...game.story,
+      reply: lines.length ? { eventId: pending.id, optionId, index: 0 } : null,
+    },
+  };
   emit();
   return true;
+}
+
+// Moves the on-screen conversation forward by one line. Returns false when there is none.
+export function advanceDialogue() {
+  if (game.phase !== 'colony') return false;
+
+  if (game.story.reply) {
+    const { eventId, optionId, index } = game.story.reply;
+    const lines = replyLines(eventId, optionId, game);
+    const nextIndex = index + 1;
+    game = {
+      ...game,
+      story: {
+        ...game.story,
+        reply: nextIndex >= lines.length ? null : { eventId, optionId, index: nextIndex },
+      },
+    };
+    emit();
+    return true;
+  }
+
+  const pending = getPending();
+  if (pending && !getPendingQuestion() && !game.story.introDone[pending.id]) {
+    const lines = introLines(pending.id, game, pending);
+    const nextIndex = game.story.introIndex + 1;
+    game = {
+      ...game,
+      story:
+        nextIndex >= lines.length
+          ? { ...game.story, introIndex: 0, introDone: { ...game.story.introDone, [pending.id]: true } }
+          : { ...game.story, introIndex: nextIndex },
+    };
+    emit();
+    return true;
+  }
+  return false;
 }
 
 export function endDay() {

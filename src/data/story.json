@@ -1,0 +1,138 @@
+{
+  "dust-storm": {
+    "intro": [
+      {
+        "who": "control",
+        "text": "Humanities-01, this is Mission Control. A big dust storm is coming. It will block about {blocked}% of your sunlight for a few days."
+      },
+      {
+        "who": "astro",
+        "text": "Copy that, Control. On a clear day our panels make {power} power units."
+      },
+      {
+        "who": "astro",
+        "when": "extraPower",
+        "text": "Our extra solar panels will help, but the dust will still cover them."
+      },
+      {
+        "who": "astro",
+        "when": "basePower",
+        "text": "We only have the basic panels, so this storm is going to hurt."
+      },
+      {
+        "who": "control",
+        "when": "hasBattery",
+        "text": "Good news. Your battery pack can store spare power for the storm."
+      },
+      {
+        "who": "control",
+        "when": "noBattery",
+        "text": "You packed no extra battery, so we must be careful with every unit of power."
+      },
+      {
+        "who": "control",
+        "text": "Decide what gets power first. Every choice has a cost."
+      }
+    ],
+    "reply": {
+      "protect-crew": [
+        {
+          "who": "astro",
+          "text": "Shield and life support first. The crops will go without light for a while."
+        },
+        {
+          "who": "control",
+          "text": "Understood. We will watch your food supply closely."
+        }
+      ],
+      "protect-crops": [
+        {
+          "who": "astro",
+          "text": "Greenhouse first. The food keeps growing, but the shield will be weak."
+        },
+        {
+          "who": "control",
+          "text": "Then radiation will slowly build up. Keep an eye on it."
+        }
+      ],
+      "keep-science": [
+        {
+          "who": "astro",
+          "text": "Science first! The instruments keep working, but we will feel it later."
+        },
+        {
+          "who": "control",
+          "text": "A brave choice. Other systems will have to wait."
+        }
+      ]
+    }
+  },
+  "solar-storm": {
+    "intro": [
+      {
+        "who": "control",
+        "text": "Humanities-01, our sensors saw a huge solar flare. Fast charged particles will reach you tomorrow."
+      },
+      {
+        "who": "control",
+        "text": "On the real Mars, such particles can arrive within tens of minutes. In this game, you get one day to prepare."
+      },
+      {
+        "who": "astro",
+        "text": "Copy that. How much will our walls stop?"
+      },
+      {
+        "who": "control",
+        "when": "noShield",
+        "text": "Your walls only have basic shielding, about {shield}%. Sheltering will matter a lot."
+      },
+      {
+        "who": "control",
+        "when": "hasShield",
+        "text": "Your extra shield wall helps. Your walls stop about {shield}%."
+      },
+      {
+        "who": "astro",
+        "text": "Understood. What should the crew do?"
+      }
+    ],
+    "reply": {
+      "full-shelter": [
+        {
+          "who": "astro",
+          "text": "Everyone into the shelter! Research will wait, but we stay safe."
+        },
+        {
+          "who": "control",
+          "text": "Good. Thick walls stop more of the particles."
+        }
+      ],
+      "partial-shelter": [
+        {
+          "who": "astro",
+          "text": "We will shelter for part of the day and work in between."
+        },
+        {
+          "who": "control",
+          "text": "A balance. Some radiation will still get through."
+        }
+      ],
+      "keep-working": [
+        {
+          "who": "astro",
+          "text": "We keep working. The shield wall has to do the job."
+        },
+        {
+          "who": "control",
+          "when": "hasShield",
+          "text": "Your shield wall will help a lot."
+        },
+        {
+          "who": "control",
+          "when": "noShield",
+          "text": "With only basic shielding, this is risky. Watch the radiation meter."
+        }
+      ]
+    }
+  }
+}
